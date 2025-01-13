@@ -4,7 +4,7 @@ import 'package:tekkenframadata/presentation/widgets/characters/character_card.d
 
 class CharacterSelectionScreen extends StatelessWidget {
   static const String name = 'character-selection';
-
+  
   const CharacterSelectionScreen({super.key});
 
   @override

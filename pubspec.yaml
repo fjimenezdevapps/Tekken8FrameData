@@ -35,7 +35,6 @@ dependencies:
   riverpod_annotation: ^2.3.5
   dio: ^5.7.0
   cupertino_icons: ^1.0.8
-  syncfusion_flutter_datagrid: ^27.2.5
 
 dev_dependencies:
   flutter_test:

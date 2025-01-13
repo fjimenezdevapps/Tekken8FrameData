@@ -1,62 +1,125 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
 
-class FrameDataSource extends DataGridSource {
-  FrameDataSource({required List<FramesNormal> frameMoves}) {
-    _originalFrameMoves = frameMoves;
-    updateData(frameMoves);
-  }
 
-  late List<FramesNormal> _originalFrameMoves;
-  List<DataGridRow> dataGridRows = [];
+class CellTapDetails {
+  final int rowIndex;
+  final int colIndex;
 
-  /// Actualiza los datos mostrados en el DataGrid.
-  void updateData(List<FramesNormal> frameMoves) {
-    dataGridRows = frameMoves
-        .map<DataGridRow>(
-          (frameMove) => DataGridRow(cells: [
-            DataGridCell<String>(columnName: 'name', value: frameMove.name),
-            DataGridCell<String>(
-                columnName: 'command', value: frameMove.command),
-            DataGridCell<String>(
-                columnName: 'startup', value: frameMove.startup),
-            DataGridCell<String>(columnName: 'block', value: frameMove.block),
-            DataGridCell<String>(columnName: 'hit', value: frameMove.hit),
-            DataGridCell<String>(
-                columnName: 'properties', value: frameMove.hitLevel),
-            DataGridCell<String>(columnName: 'damage', value: frameMove.damage),
-          ]),
-        )
-        .toList();
-    notifyListeners(); // Notifica al DataGrid para redibujar con los nuevos datos.
-  }
+  CellTapDetails(this.rowIndex, this.colIndex);
+}
 
-  /// Filtra los datos basándose en una query.
-  void filterData(String query) {
-    final filteredData = _originalFrameMoves
-        .where((frameMove) =>
-            frameMove.name!.toLowerCase().contains(query.toLowerCase()) ||
-            frameMove.command.toLowerCase().contains(query.toLowerCase()) ||
-            frameMove.hitLevel.toLowerCase().contains(query.toLowerCase()) ||
-            frameMove.damage.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    updateData(filteredData);
+// CustomDataTable con el soporte de onCellTap
+class CustomDataTable<T> extends StatelessWidget {
+  final List<String> headers;
+  final List<List<T>> rowsCells;
+  final double cellWidth;
+  final double cellHeight;
+  final double cellMargin;
+  final double cellSpacing;
+  final Color borderColor;
+  final Function(CellTapDetails)
+      onCellTap; // Callback para el toque en la celda
+
+  const CustomDataTable({
+    super.key,
+    required this.headers,
+    required this.rowsCells,
+    required this.onCellTap, // Requerimos este parámetro
+    this.cellHeight = 70.0,
+    this.cellWidth = 145.0,
+    this.cellMargin = 10.0,
+    this.cellSpacing = 10.0,
+    required this.borderColor,
+  });
+
+  Widget _buildChild(double width, dynamic data, CellTapDetails details) =>
+      GestureDetector(
+        onTap: () =>
+            onCellTap(details), // Llamamos al callback cuando se toca la celda
+        child: SizedBox(
+          width: width,
+          child: Text(
+            '$data',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+
+  TableBorder _buildBorder({bool verticalInside = false}) {
+    return TableBorder(
+      top: BorderSide(color: borderColor),
+      bottom: BorderSide(color: borderColor),
+      left: BorderSide(color: borderColor),
+      right: BorderSide(color: borderColor),
+      verticalInside:
+          verticalInside ? BorderSide(color: borderColor) : BorderSide.none,
+    );
   }
 
   @override
-  List<DataGridRow> get rows => dataGridRows;
-
-  @override
-  DataGridRowAdapter buildRow(DataGridRow row) {
-    return DataGridRowAdapter(
-      cells: row.getCells().map<Widget>((dataGridCell) {
-        return Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(8.0),
-          child: Text(dataGridCell.value.toString()),
-        );
-      }).toList(),
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        width: cellWidth * headers.length + (cellMargin * 6),
+        decoration: BoxDecoration(
+          border: Border.all(color: borderColor),
+        ),
+        child: Column(
+          children: [
+            DataTable(
+              border: _buildBorder(verticalInside: true),
+              horizontalMargin: cellMargin,
+              columnSpacing: cellSpacing,
+              headingRowHeight: cellHeight,
+              dataRowMinHeight: cellHeight,
+              dataRowMaxHeight: cellHeight,
+              columns: headers
+                  .map((header) => DataColumn(
+                      label:
+                          _buildChild(cellWidth, header, CellTapDetails(0, 0))))
+                  .toList(),
+              rows: const [],
+            ),
+            Flexible(
+              child: SingleChildScrollView(
+                child: DataTable(
+                  border: _buildBorder(verticalInside: true),
+                  horizontalMargin: cellMargin,
+                  columnSpacing: cellSpacing,
+                  headingRowHeight: 0,
+                  dataRowMinHeight: cellHeight,
+                  dataRowMaxHeight: cellHeight,
+                  columns: headers
+                      .map((header) =>
+                          DataColumn(label: SizedBox(width: cellWidth)))
+                      .toList(),
+                  rows: rowsCells
+                      .asMap()
+                      .map((rowIndex, row) => MapEntry(
+                          rowIndex,
+                          DataRow(
+                            cells: row
+                                .asMap()
+                                .map((colIndex, cell) => MapEntry(
+                                      colIndex,
+                                      DataCell(
+                                        _buildChild(cellWidth, cell,
+                                            CellTapDetails(rowIndex, colIndex)),
+                                      ),
+                                    ))
+                                .values
+                                .toList(),
+                          )))
+                      .values
+                      .toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

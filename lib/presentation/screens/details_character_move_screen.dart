@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
 
 class DetailsCharacterMoveScreen extends StatelessWidget {
   static const name = 'move-details';
+  final FramesNormal move;
 
-  const DetailsCharacterMoveScreen({super.key});
+  const DetailsCharacterMoveScreen({super.key, required this.move});
 
   @override
   Widget build(BuildContext context) {
@@ -11,35 +13,40 @@ class DetailsCharacterMoveScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Move details'),
       ),
-      body: _DetailsMoveView(),
+      body: _DetailsMoveView(move: move),
     );
   }
 }
 
 class _DetailsMoveView extends StatelessWidget {
+  final FramesNormal move;
+
+  const _DetailsMoveView({required this.move});
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.all(12.0),
-      children: const [
-        _ConteinerViewState(name: 'name'),
-        _ConteinerViewState(name: 'command'),
-        _ConteinerViewState(name: 'startup'),
-        _ConteinerViewState(name: 'block'),
-        _ConteinerViewState(name: 'hit'),
-        _ConteinerViewState(name: 'properties'),
-        _ConteinerViewState(name: 'damage'),
-        _ConteinerViewState(name: 'Notes'),
-        ],
+      children: [
+        _ConteinerViewState(name: 'name',content: move.name!.toString()),
+        _ConteinerViewState(name: 'command', content: move.command.toString()),
+        _ConteinerViewState(name: 'startup', content: move.startup.toString()),
+        _ConteinerViewState(name: 'block', content: move.block.toString()),
+        _ConteinerViewState(name: 'hit', content: move.hit.toString()),
+        _ConteinerViewState(name: 'properties', content: move.hitLevel.toString()),
+        _ConteinerViewState(name: 'damage', content: move.damage.toString()),
+        _ConteinerViewState(name: 'Notes', content: move.notes.toString()),
+      ],
     );
   }
 }
 
 class _ConteinerViewState extends StatelessWidget {
   final String name;
+  final String content;
 
-  const _ConteinerViewState({required this.name});
+  const _ConteinerViewState({required this.name, required this.content});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -66,7 +73,7 @@ class _ConteinerViewState extends StatelessWidget {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text('Contenido de la celda'),
+          Text(content),
         ],
       ),
     );
