@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
-      title: 'Flutter Tekken Frame Data',
+      title: 'Tekken 8 Frame Data',
       theme: appTheme.getTheme(),
     );
   }

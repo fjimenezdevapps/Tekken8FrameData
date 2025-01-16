@@ -8,6 +8,7 @@ final List<String> tekkenCharacters = [
   'Lars',
   'Asuka',
   'Hwoarang',
+  'Zafina',
   'Bryan',
   'Alisa',
   'Xiaoyu',

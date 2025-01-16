@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
-
 
 class CellTapDetails {
   final int rowIndex;
@@ -62,7 +60,7 @@ class CustomDataTable<T> extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: cellWidth * headers.length + (cellMargin * 6),
+        width: cellWidth * headers.length + (cellMargin * 7),
         decoration: BoxDecoration(
           border: Border.all(color: borderColor),
         ),

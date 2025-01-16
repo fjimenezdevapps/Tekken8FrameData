@@ -6,8 +6,6 @@ import 'package:tekkenframadata/presentation/providers/character/character_provi
 import 'package:tekkenframadata/presentation/widgets/frames/frame_data_source.dart';
 import 'package:tekkenframadata/presentation/widgets/help/legend_help_dialog.dart';
 
-
-
 class FrameDataScreen extends StatelessWidget {
   static const name = 'frame-data';
   final String characterName;
@@ -54,6 +52,13 @@ class _FrameDataViewState extends ConsumerState<_FrameDataView> {
     _filteredData = [];
   }
 
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
   void _onSearchChanged() {
     final query = _searchController.text.toLowerCase();
     setState(() {
@@ -96,6 +101,17 @@ class _FrameDataViewState extends ConsumerState<_FrameDataView> {
                   _filteredData =
                       _filteredData.isEmpty ? _originalData : _filteredData;
 
+                  final headers = [
+                    "Name",
+                    "Command",
+                    "StartUp",
+                    "Block",
+                    "Hit",
+                    "Counter Hit",
+                    "Hit Level",
+                    "Damage"
+                  ];
+
                   final rowsCells = _filteredData.map((row) {
                     return [
                       row.name ?? '',
@@ -103,31 +119,21 @@ class _FrameDataViewState extends ConsumerState<_FrameDataView> {
                       row.startup,
                       row.block,
                       row.hit,
+                      row.counterHit,
                       row.hitLevel,
                       row.damage,
                     ];
                   }).toList();
-
-                  final headers = [
-                    "Name",
-                    "Command",
-                    "StartUp",
-                    "Block",
-                    "Hit",
-                    "Properties",
-                    "Damage"
-                  ];
 
                   return CustomDataTable(
                     headers: headers,
                     rowsCells: rowsCells,
                     borderColor: Colors.grey.shade300,
                     onCellTap: (details) {
-                      if (details.rowIndex != 0) {
-                        // Asegúrate de no hacer clic en la fila de cabecera
-                        final rowIndex = details.rowIndex;
-                        final move = _filteredData[rowIndex];
-                        // Ahora navegas a la página de detalles
+                      // Asegúrate de que el índice sea válido
+                      if (details.rowIndex >= 0 && 
+                          details.rowIndex < _filteredData.length) {
+                        final move = _filteredData[details.rowIndex];
                         context.push('/move-details', extra: move);
                       }
                     },

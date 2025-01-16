@@ -1,83 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:tekkenframadata/config/utils/moves_properties_legends.dart';
+//import 'package:tekkenframadata/config/utils/moves_properties_legends.dart';
 
 void showHelpDialog(BuildContext context) {
-
-    showDialog(
+  showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           contentPadding: EdgeInsets.zero,
           content: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: 400,
+            width: double.maxFinite,
             child: DefaultTabController(
               length: 2,
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  TabBar(
-                    labelColor: Theme.of(context).primaryColor,
+                  const TabBar(
+                    labelColor: Colors.blue,
                     unselectedLabelColor: Colors.grey,
-                    tabs: const [
+                    tabs: [
                       Tab(text: 'Commands'),
                       Tab(text: 'Properties'),
                     ],
                   ),
-                  Expanded(
+                  SizedBox(
+                    height: 200,
                     child: TabBarView(
                       children: [
-                        // Pestaña Commands
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ListView.builder(
-                            itemCount: legendCommands.length,
-                            itemBuilder: (context, index) {
-                              final command = legendCommands[index];
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      command['command']!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                        child: Text(command['description']!)),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        // Pestaña Properties
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ListView.builder(
-                            itemCount: legendProperties.length,
-                            itemBuilder: (context, index) {
-                              final property = legendProperties[index];
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      property['property']!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                        child: Text(property['description']!)),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        Container(
+                            padding: const EdgeInsets.all(16),
+                            child: ListView.builder(
+                                itemCount: legendCommands.length,
+                                itemBuilder: (context, index) {
+                                  final command = legendCommands[index];
+                                  return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            command['command']!,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                              child: Text(
+                                                  command['description']!)),
+                                        ],
+                                      ));
+                                })),
+                        Container(
+                            padding: const EdgeInsets.all(16),
+                            child: ListView.builder(
+                                itemCount: legendProperties.length,
+                                itemBuilder: (context, index) {
+                                  final property = legendProperties[index];
+                                  return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            property['property']!,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                              child: Text(
+                                                  property['description']!)),
+                                        ],
+                                      ));
+                                })),
                       ],
                     ),
                   ),
@@ -87,13 +82,10 @@ void showHelpDialog(BuildContext context) {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
+              child: const Text('Exit'),
+              onPressed: () => Navigator.of(context).pop(),
+            )
           ],
         );
-      },
-    );
-  }
+      });
+}

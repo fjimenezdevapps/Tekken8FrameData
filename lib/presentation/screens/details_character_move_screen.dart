@@ -11,7 +11,7 @@ class DetailsCharacterMoveScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Move details'),
+        title: const Text('Move Details'),
       ),
       body: _DetailsMoveView(move: move),
     );
@@ -25,56 +25,152 @@ class _DetailsMoveView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final moveDetails = [
+      _MoveDetail(
+          label: 'COMMAND :',
+          value: move.command.isNotEmpty ? move.command : 'None'),
+      _MoveDetail(
+          label: 'DAMAGE :',
+          value: move.damage.isNotEmpty ? move.damage : 'None'),
+      _MoveDetail(
+          label: 'STARTUP :',
+          value: move.startup.isNotEmpty ? move.startup : 'None'),
+      _MoveDetail(
+          label: 'BLOCK :', value: move.block.isNotEmpty ? move.block : 'None'),
+      _MoveDetail(
+          label: 'HIT :', value: move.hit.isNotEmpty ? move.hit : 'None'),
+      _MoveDetail(
+          label: 'COUNTER HIT :',
+          value: move.counterHit.isNotEmpty ? move.counterHit : 'None'),
+      _MoveDetail(
+          label: 'HIT LEVEL :',
+          value: move.hitLevel.isNotEmpty ? move.hitLevel : 'None'),
+    ];
+
     return ListView(
-      shrinkWrap: true,
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(16.0),
       children: [
-        _ConteinerViewState(name: 'name',content: move.name!.toString()),
-        _ConteinerViewState(name: 'command', content: move.command.toString()),
-        _ConteinerViewState(name: 'startup', content: move.startup.toString()),
-        _ConteinerViewState(name: 'block', content: move.block.toString()),
-        _ConteinerViewState(name: 'hit', content: move.hit.toString()),
-        _ConteinerViewState(name: 'properties', content: move.hitLevel.toString()),
-        _ConteinerViewState(name: 'damage', content: move.damage.toString()),
-        _ConteinerViewState(name: 'Notes', content: move.notes.toString()),
+        _MoveDetailsCard(details: moveDetails),
+        const SizedBox(height: 16),
+        if (move.notes.isNotEmpty == true)
+          _DetailCard(
+            label: 'NOTES',
+            content: move.notes,
+          ),
       ],
     );
   }
 }
 
-class _ConteinerViewState extends StatelessWidget {
-  final String name;
+class _MoveDetail {
+  final String label;
+  final String value;
+
+  const _MoveDetail({required this.label, required this.value});
+}
+
+class _DetailCard extends StatelessWidget {
+  final String label;
   final String content;
 
-  const _ConteinerViewState({required this.name, required this.content});
+  const _DetailCard({
+    required this.label,
+    required this.content,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
+    return Card(
+      elevation: 4,
+      color: Colors.grey[800],
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              content,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name.toUpperCase(),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(content),
-        ],
+    );
+  }
+}
+
+class _MoveDetailsCard extends StatelessWidget {
+  final List<_MoveDetail> details;
+
+  const _MoveDetailsCard({required this.details});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      color: Colors.grey[800],
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(details.length * 2 - 1, (index) {
+            // Si el índice es par, mostramos el detalle
+            if (index % 2 == 0) {
+              final detail = details[index ~/ 2];
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Label con ancho fijo
+                  SizedBox(
+                    width: 120, // Ancho fijo para las etiquetas
+                    child: Text(
+                      detail.label,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Contenido con wrap
+                  Expanded(
+                    child: Text(
+                      detail.value,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white70,
+                      ),
+                      softWrap: true,
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              // Si el índice es impar, mostramos el divisor
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Divider(
+                  color: Colors.white24,
+                  thickness: 1,
+                ),
+              );
+            }
+          }),
+        ),
       ),
     );
   }
