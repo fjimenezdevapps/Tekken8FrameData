@@ -10,11 +10,40 @@ class DetailsCharacterMoveScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Move Details'),
-      ),
-      body: _DetailsMoveView(move: move),
-    );
+        extendBodyBehindAppBar: true, // Agrega esta propiedad
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          title: const Text(
+            'Moves Details',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'MonsterBites',
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFB71C1C),
+                Color(0xFF1B263B),
+                Color(0xFF0D1B2A),
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: _DetailsMoveView(move: move),
+          ),
+        ));
   }
 }
 

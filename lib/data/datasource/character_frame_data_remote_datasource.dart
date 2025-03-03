@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import '../../domain/entities/character_frame_data.dart';
 
-class FrameDataRemoteDataSource {
+class CharacterFrameDataRemoteDataSource {
   final Dio _dio;
 
-  FrameDataRemoteDataSource()
+  CharacterFrameDataRemoteDataSource()
       : _dio = Dio(BaseOptions(baseUrl: 'https://tekkendocs.com/api/t8'));
 
   Future<CharacterFrameData> getCharacterFrameData(String characterName) async {

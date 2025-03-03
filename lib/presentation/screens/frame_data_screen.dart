@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
-import 'package:tekkenframadata/presentation/providers/character/character_provider.dart';
-import 'package:tekkenframadata/presentation/widgets/frames/frame_data_source.dart';
+import 'package:tekkenframadata/presentation/providers/character/character_frame_data_provider.dart';
+import 'package:tekkenframadata/presentation/widgets/frames/frame_data_list.dart';
 import 'package:tekkenframadata/presentation/widgets/help/legend_help_dialog.dart';
 
 class FrameDataScreen extends StatelessWidget {
@@ -15,13 +13,43 @@ class FrameDataScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(characterName),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        title: Text(
+          characterName.toUpperCase(),
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'MonsterBites',
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+          ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
       ),
-      body: _FrameDataView(characterName: characterName),
+      body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFB71C1C),
+                Color(0xFF1B263B),
+                Color(0xFF0D1B2A),
+              ],
+            ),
+          ),
+          child: SafeArea(child: _FrameDataView(characterName: characterName))),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showHelpDialog(context);
+          showDialog(
+            context: context,
+            builder: (context) => const HelpDialogWidget(),
+          );
         },
         shape: const CircleBorder(),
         child: const Icon(Icons.help_outline_rounded),
@@ -40,32 +68,21 @@ class _FrameDataView extends ConsumerStatefulWidget {
 }
 
 class _FrameDataViewState extends ConsumerState<_FrameDataView> {
-  final TextEditingController _searchController = TextEditingController();
-  late List<FramesNormal> _originalData;
-  late List<FramesNormal> _filteredData;
+  late final TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_onSearchChanged);
-    _originalData = [];
-    _filteredData = [];
+    _searchController = TextEditingController();
+    _searchController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _onSearchChanged() {
-    final query = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredData = _originalData
-          .where((move) => move.command.toLowerCase().contains(query))
-          .toList();
-    });
   }
 
   @override
@@ -77,79 +94,62 @@ class _FrameDataViewState extends ConsumerState<_FrameDataView> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Search',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                prefixIcon: const Icon(Icons.search),
-              ),
-            ),
+          children: [
+            _buildSearchField(),
             const SizedBox(height: 16),
-            Expanded(
-              child: frameDataAsyncValue.when(
-                data: (frameData) {
-                  if (frameData.framesNormal.isEmpty) {
-                    return const Center(
-                        child: Text('No moves available for this character.'));
-                  }
-
-                  _originalData = frameData.framesNormal;
-                  _filteredData =
-                      _filteredData.isEmpty ? _originalData : _filteredData;
-
-                  final headers = [
-                    "Name",
-                    "Command",
-                    "StartUp",
-                    "Block",
-                    "Hit",
-                    "Counter Hit",
-                    "Hit Level",
-                    "Damage"
-                  ];
-
-                  final rowsCells = _filteredData.map((row) {
-                    return [
-                      row.name ?? '',
-                      row.command,
-                      row.startup,
-                      row.block,
-                      row.hit,
-                      row.counterHit,
-                      row.hitLevel,
-                      row.damage,
-                    ];
-                  }).toList();
-
-                  return CustomDataTable(
-                    headers: headers,
-                    rowsCells: rowsCells,
-                    borderColor: Colors.grey.shade300,
-                    onCellTap: (details) {
-                      // Asegúrate de que el índice sea válido
-                      if (details.rowIndex >= 0 && 
-                          details.rowIndex < _filteredData.length) {
-                        final move = _filteredData[details.rowIndex];
-                        context.push('/move-details', extra: move);
-                      }
-                    },
-                  );
-                },
-                error: (error, stack) => Center(
-                  child: Text('Error: ${error.toString()}'),
-                ),
-                loading: () => const Center(child: CircularProgressIndicator()),
-              ),
-            ),
+            Expanded(child: _buildFrameDataTable(frameDataAsyncValue)),
           ],
         ),
       ),
     );
   }
-}
 
-// Celda táctil
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchController,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: 'Search',
+        labelStyle: const TextStyle(color: Colors.white),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        prefixIcon: const Icon(Icons.search, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildFrameDataTable(AsyncValue frameDataAsyncValue) {
+    return frameDataAsyncValue.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text('Error: $error')),
+      data: (frameData) {
+        final searchQuery = _searchController.text.trim().toLowerCase();
+        final filteredData = _filterData(frameData.framesNormal);
+        if (searchQuery.isNotEmpty && filteredData.isEmpty) {
+          return const Center(child: Text('No moves match your search'));
+        }
+        return FrameDataList(characterMoves: filteredData);
+      },
+    );
+  }
+
+  List<dynamic> _filterData(List<dynamic> frameData) {
+    final query = _searchController.text.trim().toLowerCase();
+    if (query.isEmpty) return frameData;
+
+    return frameData.where((move) {
+      return move.name?.toLowerCase().contains(query) == true ||
+          move.command.toLowerCase().contains(query);
+    }).toList();
+  }
+}
