@@ -1,49 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tekkenframadata/presentation/providers/character/character_frame_data_provider.dart';
+import 'package:tekkenframadata/presentation/providers/character/selected_character_provider.dart';
 import 'package:tekkenframadata/presentation/widgets/frames/frame_data_list.dart';
 import 'package:tekkenframadata/presentation/widgets/help/legend_help_dialog.dart';
-
-class FrameDataScreen extends StatelessWidget {
+class FrameDataScreen extends ConsumerWidget {
   static const name = 'frame-data';
-  final String characterName;
 
-  const FrameDataScreen({super.key, required this.characterName});
+  const FrameDataScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedCharacter = ref.watch(selectedCharacterProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        surfaceTintColor: Colors.transparent,
         title: Text(
-          characterName.toUpperCase(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontFamily: 'MonsterBites',
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
-          ),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
+          selectedCharacter.name.toUpperCase(),
+          style: const TextStyle(color: Colors.white),
         ),
+        iconTheme: const IconThemeData(color: Colors.white)
       ),
       body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFB71C1C),
-                Color(0xFF1B263B),
-                Color(0xFF0D1B2A),
-              ],
-            ),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFB71C1C),
+              Color(0xFF1B263B),
+              Color(0xFF0D1B2A),
+            ],
           ),
-          child: SafeArea(child: _FrameDataView(characterName: characterName))),
+        ),
+        child: SafeArea(
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                const SliverToBoxAdapter(
+                  child: ConteinerWeakSideCharacter(),
+                ),
+              ];
+            },
+            body: _FrameDataView(
+              characterName: selectedCharacter.apiName,
+            ),
+          )
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
@@ -52,6 +58,7 @@ class FrameDataScreen extends StatelessWidget {
           );
         },
         shape: const CircleBorder(),
+        backgroundColor: const Color(0xFFB71C1C),
         child: const Icon(Icons.help_outline_rounded),
       ),
     );
@@ -151,5 +158,89 @@ class _FrameDataViewState extends ConsumerState<_FrameDataView> {
       return move.name?.toLowerCase().contains(query) == true ||
           move.command.toLowerCase().contains(query);
     }).toList();
+  }
+}
+
+class ConteinerWeakSideCharacter extends ConsumerWidget {
+  const ConteinerWeakSideCharacter({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    String iconPath(String avatarName) =>
+        'assets/characters_avatar/${avatarName}_avatar_tekken8.jpg';
+    final selectedCharacter = ref.watch(selectedCharacterProvider);
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: SizedBox(
+        width: screenWidth * 0.65,
+        child: Card(
+          elevation: 4.0,
+          margin: const EdgeInsets.only(
+            left: 8.0,
+            top: 8.0,
+            bottom: 8.0,
+            right: 0.0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Colors.redAccent, Color(0xFF1B263B), Colors.black87],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Image.asset(
+                      iconPath(selectedCharacter.apiName),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(width: 16.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Weak Side',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                          fontFamily: 'MonsterBites',
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        selectedCharacter.weakSide.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w400,
+                          color:
+                              selectedCharacter.weakSide.toUpperCase() == 'SSR'
+                                  ? Colors.red
+                                  : Colors.blue,
+                          fontFamily: 'MonsterBites',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
 import 'package:tekkenframadata/presentation/screens/character_selection_screen.dart';
@@ -15,17 +16,24 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/frame-data',
       name: FrameDataScreen.name,
-      builder: (context, state) {
-        final characterName = state.extra as String;
-        return FrameDataScreen(characterName: characterName);
-      },
+      builder: (context, state) => const FrameDataScreen(),
     ),
     GoRoute(
       path: '/move-details',
       name: DetailsCharacterMoveScreen.name,
-      builder: (context, state){ 
+      pageBuilder: (context, state) {
         final move = state.extra as FramesNormal;
-        return DetailsCharacterMoveScreen(move: move);
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: DetailsCharacterMoveScreen(move: move),
+          transitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        );
       },
     ),
   ],

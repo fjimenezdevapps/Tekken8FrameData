@@ -1,168 +1,221 @@
+import 'package:tekkenframadata/data/datasource/characters_moves_videos_youtube_darasource.dart';
 import 'package:tekkenframadata/domain/entities/character.dart';
 
+
 class LocalCharacterDataSource {
-  final List<Character> _characters = const [
-    Character(
+  final List<Character> _characters = [
+    const Character(
       name: "Jin",
       apiName: 'jin',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves:  [],
     ),
-    Character(
+    const Character(
       name: "Kazuya",
       apiName: 'kazuya',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Devil Jin",
       apiName: 'devil-jin',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves:  [],
     ),
-    Character(
+    const Character(
       name: "Paul",
       apiName: 'paul',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves:  [],
     ),
-    Character(
+    const Character(
       name: "King",
       apiName: 'king',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Law",
       apiName: 'law',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves:  [],
     ),
-    Character(
+    const Character(
       name: "Lars",
       apiName: 'lars',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves:  [],
     ),
-    Character(
+    const Character(
       name: "Asuka",
       apiName: 'asuka',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves:  [],
     ),
-    Character(
+    const Character(
       name: "Hwoarang",
       apiName: 'hwoarang',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves:  [],
     ),
-    Character(
+    const Character(
       name: "Zafina",
       apiName: 'zafina',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
     Character(
       name: "Bryan",
       apiName: 'bryan',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: CharactersMovesVideosYoutubeDarasource().bryanVideoMoves,
     ),
-    Character(
+    const Character(
       name: "Alisa",
       apiName: 'alisa',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Xiaoyu",
       apiName: 'xiaoyu',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Jack-8",
       apiName: 'jack-8',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
+      name: "Steve",
+      apiName: 'steve',
+      weakSide: "SSL",
+      videoListMoves: [],
+    ),
+    const Character(
       name: "Jun",
       apiName: 'jun',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
     Character(
       name: "Reina",
       apiName: 'reina',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: CharactersMovesVideosYoutubeDarasource().reinaVideoMoves,
     ),
-    Character(
+    const Character(
       name: "Nina",
       apiName: 'nina',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Lili",
       apiName: 'lili',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Claudio",
       apiName: 'claudio',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
     Character(
       name: "Shaheen",
       apiName: 'shaheen',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: CharactersMovesVideosYoutubeDarasource().shaheenVideoMoves,
     ),
-    Character(
+    const Character(
       name: "Dragunov",
       apiName: 'dragunov',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Feng",
       apiName: 'feng',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
     Character(
       name: "Leo",
       apiName: 'leo',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: CharactersMovesVideosYoutubeDarasource().leoVideoMoves,
     ),
-    Character(
+    const Character(
       name: "Raven",
       apiName: 'raven',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Azucena",
       apiName: 'azucena',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
+      name: "Victor",
+      apiName: 'victor',
+      weakSide: "SSR",
+      videoListMoves: [],
+    ),
+    const Character(
       name: "Leroy",
       apiName: 'leroy',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Kuma",
       apiName: 'kuma',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Panda",
       apiName: 'panda',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Yoshimitsu",
       apiName: 'yoshimitsu',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
-      name: "Heihachi",
-      apiName: 'heihachi',
-      weakSide: "NONE",
+    const Character(
+      name: "Eddy",
+      apiName: 'eddy',
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
       name: "Lidia",
       apiName: 'lidia',
-      weakSide: "NONE",
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
-    Character(
+    const Character(
+      name: "Heihachi",
+      apiName: 'heihachi',
+      weakSide: "SSL",
+      videoListMoves: [],
+    ),
+    const Character(
       name: "Clive",
       apiName: 'clive',
-      weakSide: "NONE",
+      weakSide: "SSR",
+      videoListMoves: [],
     ),
   ];
 
   List<Character> getCharacters() => _characters;
 }
+

@@ -70,7 +70,6 @@ class HelpDialogWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                // Ajustamos altura según orientación
                 height: isLandscape 
                     ? size.height * 0.4 
                     : size.height * (isSmallScreen ? 0.5 : 0.6),

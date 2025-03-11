@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tekkenframadata/domain/entities/character.dart';
+import 'package:tekkenframadata/presentation/providers/character/selected_character_provider.dart';
 
 class ParallelogramClipper extends CustomClipper<Path> {
   @override
@@ -18,18 +21,23 @@ class ParallelogramClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-class ConteinerCharacter extends StatelessWidget {
-  final String name;
-  const ConteinerCharacter({super.key, required this.name});
+class ConteinerCharacter extends ConsumerWidget {
+  final Character character;
+  const ConteinerCharacter({super.key, required this.character});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     String iconPath(String avatarName) =>
         'assets/characters_avatar/${avatarName}_avatar_tekken8.jpg';
+    final selectedCharacter = ref.watch(selectedCharacterProvider);
 
     return InkWell(
       onTap: () {
-        context.push('/frame-data', extra: name);
+        if (selectedCharacter.apiName != '') {
+          ref.read(selectedCharacterProvider.notifier).clear();
+        }
+        ref.read(selectedCharacterProvider.notifier).select(character);
+        context.push('/frame-data', extra: character.apiName);
       },
       splashColor: Colors.white.withOpacity(0.5),
       child: Container(
@@ -39,14 +47,14 @@ class ConteinerCharacter extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset(
-              iconPath(name),
+              iconPath(character.apiName),
               width: 80,
               height: 70,
               fit: BoxFit.cover,
             ),
             Expanded(
               child: Text(
-                name.toUpperCase(),
+                character.name.toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontFamily: 'MonsterBites',
