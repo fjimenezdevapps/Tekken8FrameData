@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
+import 'package:tekkenframadata/data/models/character_frame_data.dart';
 import 'package:go_router/go_router.dart';
 
 class FrameDataList extends StatelessWidget {

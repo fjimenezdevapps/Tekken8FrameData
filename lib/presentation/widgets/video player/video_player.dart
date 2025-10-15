@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
-import 'package:tekkenframadata/presentation/providers/character/selected_character_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tekkenframadata/data/models/character_frame_data.dart';
+import 'package:tekkenframadata/presentation/cubit/selected_character/selected_character_cubit.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class VideoPlayer extends ConsumerStatefulWidget {
+class VideoPlayer extends StatefulWidget {
   final FramesNormal move;
 
   const VideoPlayer({super.key, required this.move});
 
   @override
-  ConsumerState<VideoPlayer> createState() => _VideoPlayerScreenState();
+  State<VideoPlayer> createState() => _VideoPlayerScreenState();
 }
 
-class _VideoPlayerScreenState extends ConsumerState<VideoPlayer> {
+class _VideoPlayerScreenState extends State<VideoPlayer> {
   YoutubePlayerController? _controller;
   bool _isPlayerReady = false;
 
@@ -24,7 +24,7 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayer> {
   }
 
   void _initializeVideoController() {
-    final selectedCharacter = ref.read(selectedCharacterProvider);
+    final selectedCharacter = context.read<SelectedCharacterCubit>().state.character;
 
     final matchingVideos = selectedCharacter.videoListMoves
         .where((video) =>

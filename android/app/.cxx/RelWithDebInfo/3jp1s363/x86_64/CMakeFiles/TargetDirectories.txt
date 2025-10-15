@@ -1,0 +1,2 @@
+C:/Users/nero_/Desktop/Dart y flutter apps/tekkenframadata/android/app/.cxx/RelWithDebInfo/3jp1s363/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/nero_/Desktop/Dart y flutter apps/tekkenframadata/android/app/.cxx/RelWithDebInfo/3jp1s363/x86_64/CMakeFiles/rebuild_cache.dir

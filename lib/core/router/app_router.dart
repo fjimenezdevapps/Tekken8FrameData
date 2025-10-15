@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
+import 'package:tekkenframadata/data/models/character_frame_data.dart';
 import 'package:tekkenframadata/presentation/screens/character_selection_screen.dart';
 import 'package:tekkenframadata/presentation/screens/details_character_move_screen.dart';
 import 'package:tekkenframadata/presentation/screens/frame_data_screen.dart';

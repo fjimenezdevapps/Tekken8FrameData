@@ -4,7 +4,9 @@
     <application
         android:label="FRAMEDATAT8"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:extractNativeLibs="false"
+        android:useEmbeddedDex="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -32,6 +34,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        
+        <!-- Support for 16KB memory page sizes -->
+        <meta-data
+            android:name="android.app.lib_name"
+            android:value="flutter" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

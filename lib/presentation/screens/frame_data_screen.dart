@@ -1,71 +1,86 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tekkenframadata/presentation/providers/character/character_frame_data_provider.dart';
-import 'package:tekkenframadata/presentation/providers/character/selected_character_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tekkenframadata/presentation/cubit/selected_character/selected_character_cubit.dart';
+import 'package:tekkenframadata/presentation/cubit/selected_character/selected_character_state.dart';
+import 'package:tekkenframadata/presentation/cubit/character_frame_data/character_frame_data_cubit.dart';
+import 'package:tekkenframadata/presentation/cubit/character_frame_data/character_frame_data_state.dart';
 import 'package:tekkenframadata/presentation/widgets/frames/frame_data_list.dart';
 import 'package:tekkenframadata/presentation/widgets/help/legend_help_dialog.dart';
-class FrameDataScreen extends ConsumerWidget {
+
+class FrameDataScreen extends StatelessWidget {
   static const name = 'frame-data';
 
   const FrameDataScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedCharacter = ref.watch(selectedCharacterProvider);
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          selectedCharacter.name.toUpperCase(),
-          style: const TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white)
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFB71C1C),
-              Color(0xFF1B263B),
-              Color(0xFF0D1B2A),
+  Widget build(BuildContext context) {
+    return BlocBuilder<SelectedCharacterCubit, SelectedCharacterState>(
+      builder: (context, state) {
+        final selectedCharacter = state.character;
+
+        // OJO: esto se ejecuta en cada build; valora moverlo a un listener/efecto
+        if (selectedCharacter.apiName.isNotEmpty) {
+          context.read<CharacterFrameDataCubit>().loadFrameData(selectedCharacter.apiName);
+        }
+
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Text(
+              selectedCharacter.name.toUpperCase(),
+              style: const TextStyle(color: Colors.white),
+            ),
+            iconTheme: const IconThemeData(color: Colors.white),
+            actions: [
+              IconButton(
+                tooltip: 'Ayuda',
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const HelpDialogWidget(),
+                  );
+                },
+                icon: const Icon(Icons.help_outline_rounded),
+              ),
             ],
           ),
-        ),
-        child: SafeArea(
-          child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                const SliverToBoxAdapter(
-                  child: ConteinerWeakSideCharacter(),
-                ),
-              ];
-            },
-            body: _FrameDataView(
-              characterName: selectedCharacter.apiName,
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFB71C1C),
+                  Color(0xFF1B263B),
+                  Color(0xFF0D1B2A),
+                ],
+              ),
             ),
-          )
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => const HelpDialogWidget(),
-          );
-        },
-        shape: const CircleBorder(),
-        backgroundColor: const Color(0xFFB71C1C),
-        child: const Icon(Icons.help_outline_rounded),
-      ),
+            child: SafeArea(
+              child: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  return const [
+                    SliverToBoxAdapter(
+                      child: ConteinerWeakSideCharacter(),
+                    ),
+                  ];
+                },
+                body: _FrameDataView(
+                  characterName: selectedCharacter.apiName,
+                ),
+              ),
+            ),
+          ),
+          // <- Eliminado el FloatingActionButton
+        );
+      },
     );
   }
 }
 
-class _FrameDataView extends ConsumerStatefulWidget {
+class _FrameDataView extends StatefulWidget {
   final String characterName;
 
   const _FrameDataView({required this.characterName});
@@ -74,7 +89,7 @@ class _FrameDataView extends ConsumerStatefulWidget {
   _FrameDataViewState createState() => _FrameDataViewState();
 }
 
-class _FrameDataViewState extends ConsumerState<_FrameDataView> {
+class _FrameDataViewState extends State<_FrameDataView> {
   late final TextEditingController _searchController;
 
   @override
@@ -94,20 +109,21 @@ class _FrameDataViewState extends ConsumerState<_FrameDataView> {
 
   @override
   Widget build(BuildContext context) {
-    final frameDataAsyncValue =
-        ref.watch(characterFrameDataProvider(widget.characterName));
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildSearchField(),
-            const SizedBox(height: 16),
-            Expanded(child: _buildFrameDataTable(frameDataAsyncValue)),
-          ],
-        ),
-      ),
+    return BlocBuilder<CharacterFrameDataCubit, CharacterFrameDataState>(
+      builder: (context, state) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildSearchField(),
+                const SizedBox(height: 16),
+                Expanded(child: _buildFrameDataTable(state)),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -135,19 +151,21 @@ class _FrameDataViewState extends ConsumerState<_FrameDataView> {
     );
   }
 
-  Widget _buildFrameDataTable(AsyncValue frameDataAsyncValue) {
-    return frameDataAsyncValue.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Error: $error')),
-      data: (frameData) {
-        final searchQuery = _searchController.text.trim().toLowerCase();
-        final filteredData = _filterData(frameData.framesNormal);
-        if (searchQuery.isNotEmpty && filteredData.isEmpty) {
-          return const Center(child: Text('No moves match your search'));
-        }
-        return FrameDataList(characterMoves: filteredData);
-      },
-    );
+  Widget _buildFrameDataTable(CharacterFrameDataState state) {
+    if (state is CharacterFrameDataLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is CharacterFrameDataError) {
+      return Center(child: Text('Error: ${state.message}'));
+    } else if (state is CharacterFrameDataLoaded) {
+      final frameData = state.frameData;
+      final searchQuery = _searchController.text.trim().toLowerCase();
+      final filteredData = _filterData(frameData.framesNormal);
+      if (searchQuery.isNotEmpty && filteredData.isEmpty) {
+        return const Center(child: Text('No moves match your search'));
+      }
+      return FrameDataList(characterMoves: filteredData);
+    }
+    return const SizedBox.shrink();
   }
 
   List<dynamic> _filterData(List<dynamic> frameData) {
@@ -161,86 +179,100 @@ class _FrameDataViewState extends ConsumerState<_FrameDataView> {
   }
 }
 
-class ConteinerWeakSideCharacter extends ConsumerWidget {
+class ConteinerWeakSideCharacter extends StatelessWidget {
   const ConteinerWeakSideCharacter({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    String iconPath(String avatarName) =>
-        'assets/characters_avatar/${avatarName}_avatar_tekken8.jpg';
-    final selectedCharacter = ref.watch(selectedCharacterProvider);
-    final screenWidth = MediaQuery.of(context).size.width;
+  Widget build(BuildContext context) {
+    return BlocBuilder<SelectedCharacterCubit, SelectedCharacterState>(
+      builder: (context, state) {
+        String iconPath(String avatarName) =>
+            'assets/characters_avatar/${avatarName}_avatar_tekken8.jpg';
+        final selectedCharacter = state.character;
+        final screenWidth = MediaQuery.of(context).size.width;
 
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: SizedBox(
-        width: screenWidth * 0.65,
-        child: Card(
-          elevation: 4.0,
-          margin: const EdgeInsets.only(
-            left: 8.0,
-            top: 8.0,
-            bottom: 8.0,
-            right: 0.0,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Colors.redAccent, Color(0xFF1B263B), Colors.black87],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            // Aumentado el ancho a 0.85 en móviles y 0.75 en pantallas más grandes
+            width: screenWidth * (screenWidth < 380 ? 0.80 : 0.70),
+            child: Card(
+              elevation: 4.0,
+              margin: const EdgeInsets.only(
+                left: 8.0,
+                top: 8.0,
+                bottom: 8.0,
+                right: 0.0,
               ),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Image.asset(
-                      iconPath(selectedCharacter.apiName),
-                      fit: BoxFit.cover,
-                    ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Colors.redAccent, Color(0xFF1B263B), Colors.black87],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  const SizedBox(width: 16.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
                     children: [
-                      const Text(
-                        'Weak Side',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                          fontFamily: 'MonsterBites',
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          iconPath(selectedCharacter.apiName),
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        selectedCharacter.weakSide.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w400,
-                          color:
-                              selectedCharacter.weakSide.toUpperCase() == 'SSR'
-                                  ? Colors.red
-                                  : Colors.blue,
-                          fontFamily: 'MonsterBites',
+                      const SizedBox(width: 12.0),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Weak Side',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                  fontFamily: 'MonsterBites',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6.0),
+                            Text(
+                              selectedCharacter.weakSide.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w400,
+                                color: selectedCharacter.weakSide.toUpperCase() == 'SSR'
+                                    ? Colors.red
+                                    : Colors.blue,
+                                fontFamily: 'MonsterBites',
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -1,4 +1,4 @@
-import '../../domain/entities/character_frame_data.dart';
+import '../models/character_frame_data.dart';
 import '../../domain/repositories/character_framedata_repository.dart';
 import '../datasource/character_frame_data_remote_datasource.dart';
 

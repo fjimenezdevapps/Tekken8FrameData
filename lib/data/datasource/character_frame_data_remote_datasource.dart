@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../../domain/entities/character_frame_data.dart';
+import '../models/character_frame_data.dart';
 
 class CharacterFrameDataRemoteDataSource {
   final Dio _dio;

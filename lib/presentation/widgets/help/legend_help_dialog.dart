@@ -45,7 +45,7 @@ class HelpDialogWidget extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: colors.primary.withOpacity(0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(isSmallScreen ? 12 : 16),
                   ),
@@ -62,7 +62,7 @@ class HelpDialogWidget extends StatelessWidget {
                     fontSize: isSmallScreen ? 
                       (textTheme.labelLarge?.fontSize ?? 14) * 0.9 : null,
                   ),
-                  unselectedLabelColor: colors.onSurface.withOpacity(0.6),
+                  unselectedLabelColor: colors.onSurface.withValues(alpha: 0.6),
                   tabs: const [
                     Tab(text: 'Commands'),
                     Tab(text: 'Properties'),
@@ -131,7 +131,7 @@ class HelpDialogWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(6 * paddingScale),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(

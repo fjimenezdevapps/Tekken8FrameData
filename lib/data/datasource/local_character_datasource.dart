@@ -1,14 +1,13 @@
 import 'package:tekkenframadata/data/datasource/characters_moves_videos_youtube_darasource.dart';
 import 'package:tekkenframadata/domain/entities/character.dart';
 
-
 class LocalCharacterDataSource {
   final List<Character> _characters = [
     const Character(
       name: "Jin",
       apiName: 'jin',
       weakSide: "SSR",
-      videoListMoves:  [],
+      videoListMoves: [],
     ),
     const Character(
       name: "Kazuya",
@@ -20,13 +19,13 @@ class LocalCharacterDataSource {
       name: "Devil Jin",
       apiName: 'devil-jin',
       weakSide: "SSL",
-      videoListMoves:  [],
+      videoListMoves: [],
     ),
     const Character(
       name: "Paul",
       apiName: 'paul',
       weakSide: "SSR",
-      videoListMoves:  [],
+      videoListMoves: [],
     ),
     const Character(
       name: "King",
@@ -38,25 +37,31 @@ class LocalCharacterDataSource {
       name: "Law",
       apiName: 'law',
       weakSide: "SSR",
-      videoListMoves:  [],
+      videoListMoves: [],
+    ),
+    const Character(
+      name: "Lee",
+      apiName: 'lee',
+      weakSide: "SSL",
+      videoListMoves: [],
     ),
     const Character(
       name: "Lars",
       apiName: 'lars',
       weakSide: "SSR",
-      videoListMoves:  [],
+      videoListMoves: [],
     ),
     const Character(
       name: "Asuka",
       apiName: 'asuka',
       weakSide: "SSR",
-      videoListMoves:  [],
+      videoListMoves: [],
     ),
     const Character(
       name: "Hwoarang",
       apiName: 'hwoarang',
       weakSide: "SSL",
-      videoListMoves:  [],
+      videoListMoves: [],
     ),
     const Character(
       name: "Zafina",
@@ -128,7 +133,8 @@ class LocalCharacterDataSource {
       name: "Shaheen",
       apiName: 'shaheen',
       weakSide: "SSR",
-      videoListMoves: CharactersMovesVideosYoutubeDarasource().shaheenVideoMoves,
+      videoListMoves:
+          CharactersMovesVideosYoutubeDarasource().shaheenVideoMoves,
     ),
     const Character(
       name: "Dragunov",
@@ -214,8 +220,25 @@ class LocalCharacterDataSource {
       weakSide: "SSR",
       videoListMoves: [],
     ),
+    const Character(
+      name: "Anna",
+      apiName: 'anna',
+      weakSide: "SSR",
+      videoListMoves: [],
+    ),
+    const Character(
+      name: "Fahkumram",
+      apiName: 'fahkumram',
+      weakSide: "SSR",
+      videoListMoves: [],
+    ),
+    const Character(
+      name: "Armor King",
+      apiName: 'armor-king',
+      weakSide: "SSR",
+      videoListMoves: [],
+    ),
   ];
 
   List<Character> getCharacters() => _characters;
 }
-

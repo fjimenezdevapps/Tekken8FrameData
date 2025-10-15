@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
+import 'package:tekkenframadata/data/models/character_frame_data.dart';
 import 'package:tekkenframadata/presentation/widgets/video%20player/video_player.dart';
 
 class DetailsCharacterMoveScreen extends StatelessWidget {
@@ -157,7 +157,7 @@ class _DetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      color: Colors.black.withOpacity(0.6),
+      color: Colors.black.withValues(alpha: 0.6),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -199,7 +199,7 @@ class _MoveDetailsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      color: Colors.black.withOpacity(0.6),
+      color: Colors.black.withValues(alpha: 0.6),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
