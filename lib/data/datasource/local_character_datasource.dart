@@ -205,7 +205,7 @@ class LocalCharacterDataSource {
     const Character(
       name: "Lidia",
       apiName: 'lidia',
-      weakSide: "SSL",
+      weakSide: "SSR",
       videoListMoves: [],
     ),
     const Character(
@@ -236,6 +236,12 @@ class LocalCharacterDataSource {
       name: "Armor King",
       apiName: 'armor-king',
       weakSide: "SSR",
+      videoListMoves: [],
+    ),
+    const Character(
+      name: "Miary Zo",
+      apiName: 'miary-zo',
+      weakSide: "SSL",
       videoListMoves: [],
     ),
   ];

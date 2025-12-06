@@ -20,7 +20,9 @@ class FrameDataScreen extends StatelessWidget {
 
         // OJO: esto se ejecuta en cada build; valora moverlo a un listener/efecto
         if (selectedCharacter.apiName.isNotEmpty) {
-          context.read<CharacterFrameDataCubit>().loadFrameData(selectedCharacter.apiName);
+          context
+              .read<CharacterFrameDataCubit>()
+              .loadFrameData(selectedCharacter.apiName);
         }
 
         return Scaffold(
@@ -191,18 +193,16 @@ class ConteinerWeakSideCharacter extends StatelessWidget {
         final selectedCharacter = state.character;
         final screenWidth = MediaQuery.of(context).size.width;
 
-        return Align(
-          alignment: Alignment.centerLeft,
+        return Center(
+          // <-- centramos el hijo
           child: SizedBox(
-            // Aumentado el ancho a 0.85 en móviles y 0.75 en pantallas más grandes
             width: screenWidth * (screenWidth < 380 ? 0.80 : 0.70),
             child: Card(
               elevation: 4.0,
-              margin: const EdgeInsets.only(
-                left: 8.0,
-                top: 8.0,
-                bottom: 8.0,
-                right: 0.0,
+              margin: const EdgeInsets.symmetric(
+                // <-- márgenes iguales
+                horizontal: 8.0,
+                vertical: 8.0,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -210,7 +210,11 @@ class ConteinerWeakSideCharacter extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Colors.redAccent, Color(0xFF1B263B), Colors.black87],
+                    colors: [
+                      Colors.redAccent,
+                      Color(0xFF1B263B),
+                      Colors.black87
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -256,9 +260,11 @@ class ConteinerWeakSideCharacter extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.w400,
-                                color: selectedCharacter.weakSide.toUpperCase() == 'SSR'
-                                    ? Colors.red
-                                    : Colors.blue,
+                                color:
+                                    selectedCharacter.weakSide.toUpperCase() ==
+                                            'SSR'
+                                        ? Colors.red
+                                        : Colors.blue,
                                 fontFamily: 'MonsterBites',
                               ),
                             ),
