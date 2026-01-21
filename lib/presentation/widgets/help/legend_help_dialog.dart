@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:tekkenframadata/core/utils/moves_properties_legends.dart';
+import 'package:tekkenframadata/presentation/widgets/commons/app_dialog.dart';
 
 class HelpDialogWidget extends StatelessWidget {
   const HelpDialogWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final textTheme = theme.textTheme;
-    
+    const primary = Color(0xFFB71C1C);
+    // Acento claro para que los íconos/textos no “se pierdan” sobre fondos oscuros.
+    const propertiesAccent = Color(0xFF4FC3F7);
+
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 360;
     final isLandscape = size.width > size.height;
@@ -20,91 +21,63 @@ class HelpDialogWidget extends StatelessWidget {
 
     return DefaultTabController(
       length: 2,
-      child: AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+      child: AppDialog(
+        title: 'Move Notation Guide',
+        // Permitimos más ancho en landscape/tablet sin romper móviles.
+        maxWidth: isLandscape ? 680 : 560,
+        bodyPadding: EdgeInsets.zero,
+        body: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: primary.withValues(alpha: 0.10),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(14),
+                ),
+              ),
+              child: TabBar(
+                indicator: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+                  color: primary.withValues(alpha: 0.95),
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: (isSmallScreen ? 13 : 14) * textScaleFactor,
+                  letterSpacing: 0.2,
+                ),
+                unselectedLabelColor: Colors.white.withValues(alpha: 0.70),
+                labelColor: Colors.white,
+                tabs: const [
+                  Tab(text: 'Commands'),
+                  Tab(text: 'Properties'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildListSection(
+                    items: legendCommands,
+                    icon: Icons.gamepad_rounded,
+                    color: primary,
+                    isSmallScreen: isSmallScreen,
+                    textScaleFactor: textScaleFactor,
+                    paddingScale: paddingScale,
+                  ),
+                  _buildListSection(
+                    items: legendProperties,
+                    icon: Icons.list_alt_rounded,
+                    color: propertiesAccent,
+                    isSmallScreen: isSmallScreen,
+                    textScaleFactor: textScaleFactor,
+                    paddingScale: paddingScale,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        elevation: 8,
-        contentPadding: const EdgeInsets.all(0),
-        content: SizedBox(
-          width: size.width * (isSmallScreen ? 0.95 : 0.9),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(16 * paddingScale),
-                child: Text(
-                  'Move Notation Guide',
-                  textAlign: TextAlign.center,
-                  style: textTheme.headlineSmall?.copyWith(
-                    color: colors.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isSmallScreen ? 18 : null,
-                  ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(isSmallScreen ? 12 : 16),
-                  ),
-                ),
-                child: TabBar(
-                  indicator: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(isSmallScreen ? 12 : 16)),
-                    color: colors.primary,
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  labelStyle: textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: isSmallScreen ? 
-                      (textTheme.labelLarge?.fontSize ?? 14) * 0.9 : null,
-                  ),
-                  unselectedLabelColor: colors.onSurface.withValues(alpha: 0.6),
-                  tabs: const [
-                    Tab(text: 'Commands'),
-                    Tab(text: 'Properties'),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: isLandscape 
-                    ? size.height * 0.4 
-                    : size.height * (isSmallScreen ? 0.5 : 0.6),
-                child: TabBarView(
-                  children: [
-                    _buildListSection(
-                      items: legendCommands,
-                      icon: Icons.gamepad_rounded,
-                      color: colors.primary,
-                      isSmallScreen: isSmallScreen,
-                      textScaleFactor: textScaleFactor,
-                      paddingScale: paddingScale,
-                    ),
-                    _buildListSection(
-                      items: legendProperties,
-                      icon: Icons.list_alt_rounded,
-                      color: colors.secondary,
-                      isSmallScreen: isSmallScreen,
-                      textScaleFactor: textScaleFactor,
-                      paddingScale: paddingScale,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.close_rounded, 
-              size: isSmallScreen ? 20 : 24),
-            onPressed: () => Navigator.pop(context),
-            tooltip: 'Close',
-          ),
-        ],
       ),
     );
   }
@@ -131,7 +104,8 @@ class HelpDialogWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(6 * paddingScale),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                // Fondo sólido (sin transparencia) para mejor legibilidad.
+                color: Color.lerp(color, const Color(0xFF0D1B2A), 0.70),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -157,7 +131,7 @@ class HelpDialogWidget extends StatelessWidget {
                   Text(
                     item['description'] ?? '',
                     style: TextStyle(
-                      color: Colors.grey[700],
+                      color: Colors.white.withValues(alpha: 0.75),
                       fontSize: (isSmallScreen ? 12 : 13) * textScaleFactor,
                       height: 1.4,
                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tekkenframadata/presentation/dto/move_details_dto.dart';
+import 'package:tekkenframadata/presentation/widgets/commons/elevated_card.dart';
 
 class DetailsCharacterMoveScreen extends StatefulWidget {
   static const name = 'move-details';
@@ -182,36 +183,29 @@ class _DetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 6,
-      color: Colors.black.withValues(alpha: 0.6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.amber,
-              ),
+    return AppElevatedCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.2,
+              color: Colors.amber,
             ),
-            const SizedBox(height: 12),
-            Text(
-              content,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.white70,
-                height: 1.4,
-              ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            content,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.white70,
+              height: 1.4,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -224,50 +218,42 @@ class _MoveDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 6,
-      color: Colors.black.withValues(alpha: 0.6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: details.map((detail) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Label (ej: "COMMAND :", "DAMAGE :", etc.)
-                  SizedBox(
-                    width: 130,
-                    child: Text(
-                      detail.label,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.amber,
-                      ),
+    return AppElevatedCard(
+      child: Column(
+        children: details.map((detail) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 130,
+                  child: Text(
+                    detail.label,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.3,
+                      color: Colors.amber,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  // Valor (ej: "df+2", "12", etc.)
-                  Expanded(
-                    child: Text(
-                      detail.value,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white70,
-                      ),
-                      softWrap: true,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    detail.value,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.white70,
+                      height: 1.25,
                     ),
+                    softWrap: true,
                   ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }

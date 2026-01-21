@@ -35,6 +35,8 @@ class FrameDataScreen extends StatelessWidget {
                 onPressed: () {
                   showDialog(
                     context: context,
+                    // Barrera más oscura para eliminar el “fondo visible” y reducir mareo.
+                    barrierColor: Colors.black.withValues(alpha: 0.92),
                     builder: (context) => const HelpDialogWidget(),
                   );
                 },

@@ -23,7 +23,17 @@ final appRouter = GoRouter(
       name: DetailsCharacterMoveScreen.name,
       pageBuilder: (context, state) {
         final extra = state.extra;
-        if (extra is! MoveDetailsDto) {
+        MoveDetailsDto? move;
+        if (extra is MoveDetailsDto) {
+          move = extra;
+        } else if (extra is Map<String, dynamic>) {
+          // Soporta restoration/serialización donde `extra` vuelve como Map.
+          move = MoveDetailsDto.fromJson(extra);
+        } else if (extra is Map) {
+          move = MoveDetailsDto.fromJson(Map<String, dynamic>.from(extra));
+        }
+
+        if (move == null) {
           return CustomTransitionPage(
             key: state.pageKey,
             child: const Scaffold(
@@ -38,7 +48,6 @@ final appRouter = GoRouter(
             },
           );
         }
-        final move = extra;
         return CustomTransitionPage(
           key: state.pageKey,
           child: DetailsCharacterMoveScreen(move: move),

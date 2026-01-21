@@ -50,4 +50,49 @@ class MoveDetailsDto {
       recovery: move.recovery,
     );
   }
+
+  /// Necesario para serialización (p. ej. navigation/state restoration).
+  Map<String, dynamic> toJson() {
+    return {
+      'moveNumber': moveNumber,
+      'command': command,
+      'name': name,
+      'hitLevel': hitLevel,
+      'damage': damage,
+      'startup': startup,
+      'block': block,
+      'hit': hit,
+      'counterHit': counterHit,
+      'notes': notes,
+      'wavuId': wavuId,
+      'tags': tags,
+      'recovery': recovery,
+    };
+  }
+
+  factory MoveDetailsDto.fromJson(Map<String, dynamic> json) {
+    final rawTags = json['tags'];
+    Map<String, String?>? parsedTags;
+    if (rawTags is Map) {
+      parsedTags = rawTags.map(
+        (key, value) => MapEntry(key.toString(), value?.toString()),
+      );
+    }
+
+    return MoveDetailsDto(
+      moveNumber: (json['moveNumber'] as num?)?.toInt() ?? 0,
+      command: json['command']?.toString() ?? '',
+      name: json['name']?.toString(),
+      hitLevel: json['hitLevel']?.toString() ?? '',
+      damage: json['damage']?.toString() ?? '',
+      startup: json['startup']?.toString() ?? '',
+      block: json['block']?.toString() ?? '',
+      hit: json['hit']?.toString() ?? '',
+      counterHit: json['counterHit']?.toString() ?? '',
+      notes: json['notes']?.toString() ?? '',
+      wavuId: json['wavuId']?.toString() ?? '',
+      tags: parsedTags,
+      recovery: json['recovery']?.toString(),
+    );
+  }
 }
