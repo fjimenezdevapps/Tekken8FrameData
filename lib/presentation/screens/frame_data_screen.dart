@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tekkenframadata/domain/entities/frame_data.dart';
 import 'package:tekkenframadata/presentation/cubit/selected_character/selected_character_cubit.dart';
 import 'package:tekkenframadata/presentation/cubit/selected_character/selected_character_state.dart';
 import 'package:tekkenframadata/presentation/cubit/character_frame_data/character_frame_data_cubit.dart';
@@ -18,13 +19,6 @@ class FrameDataScreen extends StatelessWidget {
       builder: (context, state) {
         final selectedCharacter = state.character;
 
-        // OJO: esto se ejecuta en cada build; valora moverlo a un listener/efecto
-        if (selectedCharacter.apiName.isNotEmpty) {
-          context
-              .read<CharacterFrameDataCubit>()
-              .loadFrameData(selectedCharacter.apiName);
-        }
-
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -37,7 +31,7 @@ class FrameDataScreen extends StatelessWidget {
             iconTheme: const IconThemeData(color: Colors.white),
             actions: [
               IconButton(
-                tooltip: 'Ayuda',
+                tooltip: 'Help',
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -101,6 +95,23 @@ class _FrameDataViewState extends State<_FrameDataView> {
     _searchController.addListener(() {
       setState(() {});
     });
+
+    // Cargar una vez (evita llamadas repetidas en build y problemas al navegar).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (widget.characterName.isNotEmpty) {
+        context.read<CharacterFrameDataCubit>().loadFrameData(widget.characterName);
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _FrameDataView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.characterName != widget.characterName &&
+        widget.characterName.isNotEmpty) {
+      context.read<CharacterFrameDataCubit>().loadFrameData(widget.characterName);
+    }
   }
 
   @override
@@ -170,7 +181,7 @@ class _FrameDataViewState extends State<_FrameDataView> {
     return const SizedBox.shrink();
   }
 
-  List<dynamic> _filterData(List<dynamic> frameData) {
+  List<FrameData> _filterData(List<FrameData> frameData) {
     final query = _searchController.text.trim().toLowerCase();
     if (query.isEmpty) return frameData;
 

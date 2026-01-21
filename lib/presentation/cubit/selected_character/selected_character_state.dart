@@ -12,7 +12,6 @@ class SelectedCharacterState extends Equatable {
         name: '',
         apiName: '',
         weakSide: '',
-        videoListMoves: [],
       ),
     );
   }

@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:tekkenframadata/data/models/character_frame_data.dart';
-import 'package:tekkenframadata/presentation/widgets/video%20player/video_player.dart';
+import 'package:tekkenframadata/presentation/dto/move_details_dto.dart';
 
-class DetailsCharacterMoveScreen extends StatelessWidget {
+class DetailsCharacterMoveScreen extends StatefulWidget {
   static const name = 'move-details';
-  final FramesNormal move;
+  final MoveDetailsDto move;
 
   const DetailsCharacterMoveScreen({super.key, required this.move});
+
+  @override
+  State<DetailsCharacterMoveScreen> createState() =>
+      _DetailsCharacterMoveScreenState();
+}
+
+class _DetailsCharacterMoveScreenState extends State<DetailsCharacterMoveScreen> {
+  // Controladores explícitos para asegurar dispose() al volver atrás.
+  final ScrollController _outerScrollController = ScrollController();
+  final ScrollController _innerScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _outerScrollController.dispose();
+    _innerScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +58,11 @@ class DetailsCharacterMoveScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: _DetailsMoveView(move: move),
+          child: _DetailsMoveView(
+            move: widget.move,
+            outerScrollController: _outerScrollController,
+            innerScrollController: _innerScrollController,
+          ),
         ),
       ),
     );
@@ -50,9 +70,15 @@ class DetailsCharacterMoveScreen extends StatelessWidget {
 }
 
 class _DetailsMoveView extends StatelessWidget {
-  final FramesNormal move;
+  final MoveDetailsDto move;
+  final ScrollController outerScrollController;
+  final ScrollController innerScrollController;
 
-  const _DetailsMoveView({required this.move});
+  const _DetailsMoveView({
+    required this.move,
+    required this.outerScrollController,
+    required this.innerScrollController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +114,7 @@ class _DetailsMoveView extends StatelessWidget {
     ];
 
     return NestedScrollView(
+      controller: outerScrollController,
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return [
           SliverOverlapAbsorber(
@@ -98,8 +125,7 @@ class _DetailsMoveView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    VideoPlayer(move: move),
-                    const SizedBox(height: 16),
+                    // Video player removed
                   ]),
                 ),
               ),
@@ -110,6 +136,7 @@ class _DetailsMoveView extends StatelessWidget {
       body: Builder(
         builder: (context) {
           return CustomScrollView(
+            controller: innerScrollController,
             slivers: [
               SliverOverlapInjector(
                 handle:
@@ -121,7 +148,7 @@ class _DetailsMoveView extends StatelessWidget {
                   delegate: SliverChildListDelegate([
                     _MoveDetailsCard(details: moveDetails),
                     const SizedBox(height: 16),
-                    if (move.notes.isNotEmpty == true)
+                    if (move.notes.isNotEmpty)
                       _DetailCard(
                         label: 'NOTES',
                         content: move.notes,

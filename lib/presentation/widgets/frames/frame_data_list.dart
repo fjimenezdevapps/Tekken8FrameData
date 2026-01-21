@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tekkenframadata/data/models/character_frame_data.dart';
+import 'package:tekkenframadata/domain/entities/frame_data.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tekkenframadata/presentation/dto/move_details_dto.dart';
 
 class FrameDataList extends StatelessWidget {
-  final List<dynamic> characterMoves;
+  final List<FrameData> characterMoves;
 
   const FrameDataList({
     super.key,
@@ -90,10 +91,11 @@ class FrameDataList extends StatelessWidget {
     );
   }
 
-  Widget _buildListItem(BuildContext context, FramesNormal frameNormal) {
+  Widget _buildListItem(BuildContext context, FrameData frameData) {
     return GestureDetector(
       onTap: () {
-        context.push('/move-details', extra: frameNormal);
+        // Navegamos con un DTO para desacoplar la UI del dominio.
+        context.push('/move-details', extra: MoveDetailsDto.fromFrameData(frameData));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -106,14 +108,14 @@ class FrameDataList extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildListCell(frameNormal.name ?? "", 200),
-              _buildListCell(frameNormal.command, 200),
-              _buildListCell(frameNormal.startup, 200),
-              _buildListCell(frameNormal.block, 200),
-              _buildListCell(frameNormal.hit, 200),
-              _buildListCell(frameNormal.counterHit, 200),
-              _buildListCell(frameNormal.hitLevel, 200),
-              _buildListCell(frameNormal.damage, 200),
+              _buildListCell(frameData.name ?? "", 200),
+              _buildListCell(frameData.command, 200),
+              _buildListCell(frameData.startup, 200),
+              _buildListCell(frameData.block, 200),
+              _buildListCell(frameData.hit, 200),
+              _buildListCell(frameData.counterHit, 200),
+              _buildListCell(frameData.hitLevel, 200),
+              _buildListCell(frameData.damage, 200),
             ],
           ),
         ),

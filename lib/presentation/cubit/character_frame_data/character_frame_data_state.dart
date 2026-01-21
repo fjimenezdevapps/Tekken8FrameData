@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:tekkenframadata/data/models/character_frame_data.dart';
+import 'package:tekkenframadata/domain/entities/character_frame_data.dart';
 
 abstract class CharacterFrameDataState extends Equatable {
   const CharacterFrameDataState();

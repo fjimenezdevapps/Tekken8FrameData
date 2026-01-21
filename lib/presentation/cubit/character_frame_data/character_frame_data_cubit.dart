@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tekkenframadata/data/datasource/character_frame_data_remote_datasource.dart';
 import 'package:tekkenframadata/data/repositories/character_frame_data_repository_impl.dart';
@@ -12,7 +13,8 @@ class CharacterFrameDataCubit extends Cubit<CharacterFrameDataState> {
         super(CharacterFrameDataInitial());
 
   static CharacterFrameDataCubit create() {
-    final remoteDataSource = CharacterFrameDataRemoteDataSource();
+    final dio = Dio(BaseOptions(baseUrl: 'https://tekkendocs.com/api/t8'));
+    final remoteDataSource = CharacterFrameDataRemoteDataSource(dio: dio);
     final repository = CharacterFrameDataRepositoryImpl(remoteDataSource);
     final useCase = GetCharacterFrameDataUseCase(repository);
     return CharacterFrameDataCubit(getCharacterFrameDataUseCase: useCase);
